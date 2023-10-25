@@ -156,7 +156,7 @@ export default {
     border-bottom: 1px solid #ccc;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
-    
+
     h1 {
       font-size: 1.5rem;
       font-weight: 600;
