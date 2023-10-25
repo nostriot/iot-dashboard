@@ -123,22 +123,50 @@ export default {
 </script>
 
 <template>
-  <p v-if="splashMessage">{{ splashMessage }}</p>
-  <!--  <p><button @click="doTheThing"-->
-  <!--             :disabled="!buttonEnabled"-->
-  <!--  >DOIT!</button></p>-->
-  <control :controlValue="temperatureValue" controlType="increment"
-           control-title="Temperature"
-           unit="°C"
-           @updatecontrol="handleSettingChange('temperature', $event)"
-  />
-  <br><br><br><br>
-  <control :controlValue="lightValue" controlType="switch"
-           control-title="Light"
-           @updatecontrol="handleSettingChange('light', $event)"
-  />
+  <div class="dashboard">
+    <div class="dashboard__header">
+      <h1>NostrIoT</h1>
+    </div>
+    <div class="dashboard__splash">
+      <p>{{ splashMessage }}</p>
+    </div>
+    <div class="dashboard__cards">
+      <control :controlValue="temperatureValue" controlType="increment"
+               control-title="Temperature"
+               unit="°C"
+               @updatecontrol="handleSettingChange('temperature', $event)"
+      />
+      <control :controlValue="lightValue" controlType="switch"
+               control-title="Light"
+               @updatecontrol="handleSettingChange('light', $event)"
+      />
+    </div>
+  </div>
 </template>
 
-<style scoped>
-
+<style lang="scss">
+.dashboard {
+  &__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1rem;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+  &__cards {
+    display: flex;
+    flex: 1;
+    width: 100%;
+  }
+}
 </style>

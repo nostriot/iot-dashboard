@@ -3,18 +3,11 @@ import Dashboard from "@/components/Dashboard.vue";
 </script>
 
 <template>
-  <main>
+  <main class="dashboard">
     <dashboard></dashboard>
     </main>
 </template>
 
-<style>
-main {
-  width: 500px;
-  margin: 0 auto;
-}
+<style lang="scss">
 
-h1, p {
-  text-align: center;
-}
 </style>

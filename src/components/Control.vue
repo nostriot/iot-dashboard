@@ -40,17 +40,17 @@ export default {
 
 <template>
   <div class="control-card">
-    <p>{{ controlTitle }}</p>
-    <p v-if="controlType == 'switch'">{{ controlValue == 1 ? 'On' : 'Off'}}</p>
-    <p v-else>{{ controlValue }}{{ unit }}</p>
+    <h2>{{ controlTitle }}</h2>
+    <div class="control-card__value">
+      <p v-if="controlType == 'switch'">{{ controlValue == 1 ? 'On' : 'Off'}}</p>
+      <p v-else>{{ newControlValue }}{{ unit }}</p>
+    </div>
     <div class="control-card__settings">
-      <p>Set</p>
       <div v-if="controlType == 'increment'">
         <p>
-          <button @click="++newControlValue">+</button>
-          <button @click="--newControlValue">-</button>
+          <button class="control-card__settings__adjust" @click="++newControlValue">+</button>
+          <button class="control-card__settings__adjust" @click="--newControlValue">-</button>
         </p>
-        <p>{{ newControlValue }}</p>
         <p>
           <button @click="sendSetting()">Set</button>
         </p>
@@ -69,6 +69,33 @@ export default {
   </div>
 </template>
 
-<style>
+<style lang="scss">
+.control-card {
+  padding: 20px;
+  margin: 15px;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  width: 33vw;
+  height: 33vw;
 
+  &__value {
+    font-size: 24px;
+  }
+
+  &__settings {
+    button {
+      background-color: transparent;
+      border: 1px solid black;
+      margin: 5px;
+      border-radius: 4px;
+      padding: 5px 10px;
+      font-size: 22px;
+    }
+
+    &__adjust {
+      width: 40px;
+    }
+  }
+}
 </style>
