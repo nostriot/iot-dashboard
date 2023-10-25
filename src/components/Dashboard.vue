@@ -78,7 +78,7 @@ export default {
       await this.relay.publish(signedEvent)
       console.log('published')
 
-      this.setSplashMessage(`Setting ${name} to ${value} sent`)
+      this.setSplashMessage(`Set ${name} to ${value}.`)
 
     },
     async doTheThing() {
@@ -127,7 +127,7 @@ export default {
     <div class="dashboard__header">
       <h1>NostrIoT</h1>
     </div>
-    <div class="dashboard__splash">
+    <div v-if="splashMessage" class="dashboard__splash">
       <p>{{ splashMessage }}</p>
     </div>
     <div class="dashboard__cards">
@@ -162,6 +162,20 @@ export default {
       font-weight: 600;
       color: #333;
     }
+  }
+
+  // splash message, fixed under header
+  &__splash {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    padding: 1rem;
+    background-color: #fff;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    text-align: center;
   }
   &__cards {
     display: flex;
