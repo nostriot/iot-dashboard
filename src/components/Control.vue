@@ -57,7 +57,9 @@ export default {
       </div>
       <div v-else-if="controlType == 'switch'">
         <p>
-          <button @click="sendSetting()">Set</button>
+          <button @click="newControlValue = (newControlValue ? 0 : 1);sendSetting()">
+            {{ newControlValue == 1 ? 'Off' : 'On'}}
+          </button>
         </p>
       </div>
       <div v-else>

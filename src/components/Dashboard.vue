@@ -8,7 +8,7 @@ import {
   getSignature,
   getEventHash,
   getPublicKey,
-  nip44
+  nip04
 } from 'nostr-tools'
 import {secp256k1} from '@noble/curves/secp256k1'
 
@@ -56,12 +56,13 @@ export default {
       // now construct the event
       let key = secp256k1.getSharedSecret(this.privateKey, "02" + this.receiverPublicKey)
       console.log('key', key)
-      let ciphertext = nip44.encrypt(key, contentString)
+      let ciphertext = await nip04.encrypt(this.privateKey, this.receiverPublicKey, contentString)
+      console.log('ciphertext', ciphertext)
 
       let event = {
-        kind: 8000,
-        created_at: Math.floor(Date.now() / 1000),
         pubkey: this.publicKey,
+        created_at: Math.floor(Date.now() / 1000),
+        kind: 8000,
         tags: [['p', this.receiverPublicKey]],
         content: ciphertext,
       }
@@ -83,7 +84,8 @@ export default {
     async doTheThing() {
       let privateKey = "9dc30626e365978aceeb646217860477700e8ea14a09baea9e7302abb0f3d627"
       let event = {
-        kind: 8000,
+        // kind: 8000,
+        kind: 4,
         created_at: Math.floor(Date.now() / 1000),
         tags: [],
         content: 'go',
