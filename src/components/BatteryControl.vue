@@ -88,6 +88,14 @@ export default {
   }
 }
 
+.control-card__icon--battery {
+  svg {
+    path {
+      fill: transparent;
+    }
+  }
+}
+
 .control-card__value__battery-refresh-button {
   position: absolute;
   top: 60px;
