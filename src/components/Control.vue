@@ -70,7 +70,7 @@ export default {
             @click="newControlValue = (newControlValue ? 0 : 1);sendSetting()"
         />
       </p>
-      <p v-else>
+      <p v-else class="control-card__value__temperature">
         {{ controlValue }}{{ unit }}
       </p>
     </div>
@@ -114,9 +114,18 @@ export default {
     right: 20px;
     font-size: 2.4rem;
 
+
     svg {
       width: 48px;
       height: 48px;
+    }
+
+    &__temperature {
+      border: 1px solid #9569b6;
+      padding: 6px;
+      border-radius: 10px;
+      // inner glow
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
     }
   }
 
