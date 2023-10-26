@@ -253,7 +253,6 @@ export default {
     padding: 1rem;
     border-bottom: 1px solid #fff;
     margin-bottom: 10px;
-    padding-top: 40px;
     position: relative;
 
     h1 {
@@ -268,7 +267,6 @@ export default {
       cursor: pointer;
       position: absolute;
       right: 1rem;
-      top: 1.6rem;
     }
   }
 
