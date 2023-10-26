@@ -27,6 +27,8 @@ export default {
       buttonEnabled: false,
       temperatureValue: 0,
       lightValue: 0,
+      mostRecentTemperatureTimestamp: 0,
+      mostRecentLightTimestamp: 0,
       relay: null // or you can initialize with relayInit('wss://nos.lol') if you want it immediately
     }
   },
@@ -118,9 +120,15 @@ export default {
         console.log('decrypted content', content)
         let contentObj = JSON.parse(content)
         if (contentObj.name.toLowerCase() === 'light') {
-          this.lightValue = contentObj.value
+          if (event.created_at > this.mostRecentLightTimestamp) {
+            this.lightValue = contentObj.value
+            this.mostRecentLightTimestamp = event.created_at
+          }
         } else if (contentObj.name.toLowerCase() === 'temperature') {
-          this.temperatureValue = contentObj.value
+          if (event.created_at > this.mostRecentTemperatureTimestamp) {
+            this.temperatureValue = contentObj.value
+            this.mostRecentTemperatureTimestamp = event.created_at
+          }
         }
       })
     }
