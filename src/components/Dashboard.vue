@@ -13,9 +13,11 @@ import {
 import {secp256k1} from '@noble/curves/secp256k1'
 
 import Control from "@/components/Control.vue";
+import BatteryControl from "@/components/BatteryControl.vue";
 
 export default {
   components: {
+    BatteryControl,
     Control
   },
   data() {
@@ -220,6 +222,7 @@ export default {
                  control-title="Light"
                  @updatecontrol="handleSettingChange('light', $event)"
         />
+        <battery-control/>
       </div>
     </div>
     <div class="dashboard__content dashboard__content--no-internet" v-else>
