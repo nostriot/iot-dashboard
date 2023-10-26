@@ -34,8 +34,19 @@ export default {
     }
   },
   methods: {
-    onOffline () { this.hasInternetConnection = false },
-    onOnline () { this.hasInternetConnection = true },
+    reload() {
+      window.location.reload()
+    },
+    onOffline() {
+      this.hasInternetConnection = false
+      // kill the relay connection
+      this.relay = null
+    },
+    onOnline() {
+      this.hasInternetConnection = true
+      // connect to relay
+      this.init()
+    },
     /**
      * method for setting a splash message and clearing after 3 seconds
      */
@@ -131,11 +142,37 @@ export default {
           }
         }
       })
+    },
+    isRelayConnected() {
+      // console.log(this.relay && this.relay.status)
+      if (!this.relay) {
+        return false
+      }
+      //  0 is connecting
+      //  1 is open
+      //  2 is closing
+      //  3 is closed
+      if (this.relay.status === 1) {
+        return true
+      } else {
+        return false
+      }
+    },
+    pingRelayStatus() {
+      // every 5 seconds, refresh the relay status
+      let status = this.isRelayConnected()
+      console.log('Is relay connected?', status)
+
+      setTimeout(() => {
+        this.pingRelayStatus()
+      }, 5000)
     }
   },
+  computed: {},
   mounted() {
     this.init()
     this.hasInternetConnection = navigator.onLine
+    this.pingRelayStatus()
   },
   created() {
     window.addEventListener('offline', this.onOffline)
@@ -157,9 +194,19 @@ export default {
     </div>
     <div class="dashboard__content" v-if="hasInternetConnection">
       <div class="dashboard__content__header">
-        <div class="dashboard__content__header__circle"></div>
+        <div
+            :class="`dashboard__content__header__circle ${isRelayConnected() ? 'dashboard__content__header__circle--active' : 'dashboard__content__header__circle--inactive'}`">
+        </div>
         <h2>Living Room</h2>
       </div>
+
+      <p v-if="!isRelayConnected()" class="dashboard__reload-bar">
+        Not connected to relay.
+        <button @click="reload()">
+          Reload
+        </button>
+      </p>
+
       <div v-if="splashMessage" class="dashboard__splash">
         <p>{{ splashMessage }}</p>
       </div>
@@ -187,6 +234,16 @@ export default {
 .dashboard {
   background-color: rgba(255, 255, 255, 0.6);
   height: 100vh;
+
+  &__reload-bar {
+    margin-top: 10px;
+    button {
+      background-color: white;
+      border: 1px solid white;
+      border-radius: 5px;
+      padding: 4px;
+    }
+  }
 
   &__header {
     display: flex;
@@ -224,10 +281,12 @@ export default {
       text-align: center;
       font-size: 1rem;
       color: #666;
+
       h1 {
         font-weight: bold;
         font-size: 3rem;
       }
+
       p {
         font-weight: 500;
       }
@@ -244,10 +303,14 @@ export default {
         width: 10px;
         height: 10px;
         border-radius: 50%;
-        background-color: lightgreen;
+        background-color: red;
         margin-right: 10px;
         box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
         margin-bottom: 3px;
+
+        &--active {
+          background-color: lightgreen;
+        }
       }
     }
   }
