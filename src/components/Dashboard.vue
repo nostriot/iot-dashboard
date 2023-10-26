@@ -316,7 +316,7 @@ export default {
   // splash message, fixed under header
   &__splash {
     position: fixed;
-    top: 86px;
+    top: 64px;
     left: 0;
     right: 0;
     padding: 1rem;
