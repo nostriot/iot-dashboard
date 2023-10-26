@@ -43,6 +43,11 @@ export default {
   },
   // emit
   emits: ['updatecontrol'],
+  watch: {
+    controlValue: function (val) {
+      this.newControlValue = val
+    }
+  }
 }
 </script>
 
@@ -60,23 +65,13 @@ export default {
     </div>
     <div class="control-card__value" @click="settingsVisible = true">
       <p v-if="controlType == 'switch'">
-        <span v-if="controlValue">
         <on-off
             :is-on="newControlValue == 1 ? true : false"
             @click="newControlValue = (newControlValue ? 0 : 1);sendSetting()"
         />
-        </span>
-        <span v-else>
-          ...
-        </span>
       </p>
       <p v-else>
-        <span v-if="controlValue">
-          {{ controlValue }}{{ unit }}
-        </span>
-        <span v-else>
-          ...
-        </span>
+        {{ controlValue }}{{ unit }}
       </p>
     </div>
     <div class="control-card__settings" v-if="controlType == 'increment' && settingsVisible">
@@ -91,7 +86,8 @@ export default {
         <p>
           <button @click="sendSetting()"
                   class="control-card__settings__set-button"
-          >Set</button>
+          >Set
+          </button>
         </p>
       </div>
     </div>

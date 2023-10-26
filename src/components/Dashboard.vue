@@ -25,8 +25,8 @@ export default {
       publicKey: "d58d5dc2abdef2195532b0940d56bc44c693b48084bf11d0bb70035510c9e6b5",
       receiverPublicKey: "22defd21ef1187806b54033e9d657d4430d98efaebd1289bb24b82224b80c7b4",
       buttonEnabled: false,
-      temperatureValue: null,
-      lightValue: null,
+      temperatureValue: 0,
+      lightValue: 0,
       relay: null // or you can initialize with relayInit('wss://nos.lol') if you want it immediately
     }
   },
@@ -79,9 +79,9 @@ export default {
       console.log('published')
 
       let displayValue = value
-      if(name.toLowerCase() === 'temperature') {
+      if (name.toLowerCase() === 'temperature') {
         displayValue = `set to ${value}°C`
-      } else if(name.toLowerCase() === 'light') {
+      } else if (name.toLowerCase() === 'light') {
         displayValue = "turned " + (value ? "on" : "off")
       }
 
@@ -91,39 +91,38 @@ export default {
       this.setSplashMessage(`${displayName} has been ${displayValue}.`)
 
     },
-    async doTheThing() {
-      let privateKey = "9dc30626e365978aceeb646217860477700e8ea14a09baea9e7302abb0f3d627"
-      let event = {
-        // kind: 8000,
-        kind: 4,
-        created_at: Math.floor(Date.now() / 1000),
-        tags: [],
-        content: 'go',
-        pubkey: getPublicKey(privateKey),
-      }
-
-      event.id = getEventHash(event)
-      event.sig = getSignature(event, privateKey)
-
-      let ok = validateEvent(event)
-      let veryOk = verifySignature(event)
-      // broadcast it
-      const signedEvent = finishEvent(event, privateKey)
-      console.log(signedEvent)
-      await this.relay.publish(signedEvent)
-      console.log('published')
-    },
     async init() {
       this.relay = relayInit('wss://nos.lol')
       this.relay.on('connect', () => {
         console.log(`connected to ${this.relay.url}`)
         this.buttonEnabled = true
+        this.getIntentEvents()
       })
       this.relay.on('error', () => {
         console.log(`failed to connect to ${this.relay.url}`)
       })
 
       await this.relay.connect()
+    },
+    async getIntentEvents() {
+      // now request the last X events
+      let sub = await this.relay.sub([
+        {
+          kinds: [8000],
+          // authors: [this.receiverPublicKey],
+          limit: 10
+        },
+      ])
+      sub.on('event', async (event) => {
+        let content = await nip04.decrypt(this.privateKey, this.receiverPublicKey, event.content)
+        console.log('decrypted content', content)
+        let contentObj = JSON.parse(content)
+        if (contentObj.name.toLowerCase() === 'light') {
+          this.lightValue = contentObj.value
+        } else if (contentObj.name.toLowerCase() === 'temperature') {
+          this.temperatureValue = contentObj.value
+        }
+      })
     }
   },
   mounted() {
@@ -223,7 +222,7 @@ export default {
     left: 0;
     right: 0;
     padding: 1rem;
-    background-color: rgba(255,255,255, 0.6);
+    background-color: rgba(255, 255, 255, 0.6);
     text-align: center;
 
     p {
@@ -232,6 +231,7 @@ export default {
       font-size: 1rem;
     }
   }
+
   &__cards {
     width: 100%;
   }
