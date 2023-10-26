@@ -25,8 +25,8 @@ export default {
       publicKey: "d58d5dc2abdef2195532b0940d56bc44c693b48084bf11d0bb70035510c9e6b5",
       receiverPublicKey: "22defd21ef1187806b54033e9d657d4430d98efaebd1289bb24b82224b80c7b4",
       buttonEnabled: false,
-      temperatureValue: 21,
-      lightValue: 0,
+      temperatureValue: null,
+      lightValue: null,
       relay: null // or you can initialize with relayInit('wss://nos.lol') if you want it immediately
     }
   },
@@ -78,7 +78,17 @@ export default {
       await this.relay.publish(signedEvent)
       console.log('published')
 
-      this.setSplashMessage(`Set ${name} to ${value}.`)
+      let displayValue = value
+      if(name.toLowerCase() === 'temperature') {
+        displayValue = `set to ${value}°C`
+      } else if(name.toLowerCase() === 'light') {
+        displayValue = "turned " + (value ? "on" : "off")
+      }
+
+      // uc first letter of name
+      let displayName = name.charAt(0).toUpperCase() + name.slice(1)
+
+      this.setSplashMessage(`${displayName} has been ${displayValue}.`)
 
     },
     async doTheThing() {
@@ -125,61 +135,104 @@ export default {
 <template>
   <div class="dashboard">
     <div class="dashboard__header">
-      <h1>NostrIoT</h1>
+      <h1>My Devices</h1>
+      <p class="dashboard__header__add-button">+</p>
     </div>
-    <div v-if="splashMessage" class="dashboard__splash">
-      <p>{{ splashMessage }}</p>
-    </div>
-    <div class="dashboard__cards">
-      <control :controlValue="temperatureValue" controlType="increment"
-               control-title="Temperature"
-               unit="°C"
-               @updatecontrol="handleSettingChange('temperature', $event)"
-      />
-      <control :controlValue="lightValue" controlType="switch"
-               control-title="Light"
-               @updatecontrol="handleSettingChange('light', $event)"
-      />
+    <div class="dashboard__content">
+      <div class="dashboard__content__header">
+        <div class="dashboard__content__header__circle"></div>
+        <h2>Living Room</h2>
+      </div>
+      <div v-if="splashMessage" class="dashboard__splash">
+        <p>{{ splashMessage }}</p>
+      </div>
+      <div class="dashboard__cards">
+        <control :controlValue="temperatureValue" controlType="increment"
+                 control-title="Temperature"
+                 unit="°C"
+                 @updatecontrol="handleSettingChange('temperature', $event)"
+        />
+        <control :controlValue="lightValue" controlType="switch"
+                 control-title="Light"
+                 @updatecontrol="handleSettingChange('light', $event)"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style lang="scss">
 .dashboard {
+  background-color: rgba(255, 255, 255, 0.6);
+  height: 100vh;
+
   &__header {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
     align-items: center;
     padding: 1rem;
-    background-color: #fff;
-    border-bottom: 1px solid #ccc;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #fff;
     margin-bottom: 10px;
+    padding-top: 40px;
+    position: relative;
 
     h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #333;
+      font-size: 1.2rem;
+      color: white;
+      font-weight: bold;
+    }
+
+    &__add-button {
+      font-size: 2.2rem;
+      color: white;
+      cursor: pointer;
+      position: absolute;
+      right: 1rem;
+      top: 1.6rem;
+    }
+  }
+
+  &__content {
+    position: relative;
+    padding: 0 1rem;
+
+    &__header {
+      color: white;
+      font-size: 0.8rem;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+
+      &__circle {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: lightgreen;
+        margin-right: 10px;
+        box-shadow: 0 0 20px rgba(0, 255, 0, 0.7);
+        margin-bottom: 3px;
+      }
     }
   }
 
   // splash message, fixed under header
   &__splash {
     position: fixed;
-    top: 60px;
+    top: 86px;
     left: 0;
     right: 0;
     padding: 1rem;
-    background-color: #fff;
-    border-bottom: 1px solid #ccc;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
+    background-color: rgba(255,255,255, 0.6);
     text-align: center;
+
+    p {
+      color: #666666;
+      font-weight: 600;
+      font-size: 1rem;
+    }
   }
   &__cards {
-    display: flex;
-    flex: 1;
     width: 100%;
   }
 }

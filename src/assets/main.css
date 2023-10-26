@@ -4,3 +4,8 @@
   max-width: 1280px;
 
 }
+
+body {
+  background-image: url(../assets/bg.jpg);
+  background-size: cover;
+}
