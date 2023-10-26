@@ -20,6 +20,7 @@ export default {
   },
   data() {
     return {
+      hasInternetConnection: false,
       splashMessage: "",
       privateKey: "89135da8d99a49726a2102b6663c829de39b2ea2995d73b731c07c7485ec35ca",
       publicKey: "d58d5dc2abdef2195532b0940d56bc44c693b48084bf11d0bb70035510c9e6b5",
@@ -33,6 +34,8 @@ export default {
     }
   },
   methods: {
+    onOffline () { this.hasInternetConnection = false },
+    onOnline () { this.hasInternetConnection = true },
     /**
      * method for setting a splash message and clearing after 3 seconds
      */
@@ -57,9 +60,7 @@ export default {
       let contentString = JSON.stringify(content)
       // now construct the event
       let key = secp256k1.getSharedSecret(this.privateKey, "02" + this.receiverPublicKey)
-      console.log('key', key)
       let ciphertext = await nip04.encrypt(this.privateKey, this.receiverPublicKey, contentString)
-      console.log('ciphertext', ciphertext)
 
       let event = {
         pubkey: this.publicKey,
@@ -73,7 +74,6 @@ export default {
       event.sig = getSignature(event, this.privateKey)
       let ok = validateEvent(event)
       let veryOk = verifySignature(event)
-      console.log("valid event", ok, veryOk)
       // broadcast it
       const signedEvent = finishEvent(event, this.privateKey)
       console.log(signedEvent)
@@ -135,7 +135,17 @@ export default {
   },
   mounted() {
     this.init()
-  }
+    this.hasInternetConnection = navigator.onLine
+  },
+  created() {
+    window.addEventListener('offline', this.onOffline)
+    window.addEventListener('online', this.onOnline)
+  },
+  destroyed() {
+    window.removeEventListener('offline', this.onOffline)
+    window.removeEventListener('online', this.onOnline)
+  },
+
 }
 </script>
 
@@ -145,7 +155,7 @@ export default {
       <h1>My Devices</h1>
       <p class="dashboard__header__add-button">+</p>
     </div>
-    <div class="dashboard__content">
+    <div class="dashboard__content" v-if="hasInternetConnection">
       <div class="dashboard__content__header">
         <div class="dashboard__content__header__circle"></div>
         <h2>Living Room</h2>
@@ -164,6 +174,11 @@ export default {
                  @updatecontrol="handleSettingChange('light', $event)"
         />
       </div>
+    </div>
+    <div class="dashboard__content dashboard__content--no-internet" v-else>
+      <h1>:(</h1>
+      <p>No Internet connection found.</p>
+      <p>Please connect to the Internet and try again.</p>
     </div>
   </div>
 </template>
@@ -203,6 +218,20 @@ export default {
   &__content {
     position: relative;
     padding: 0 1rem;
+
+    &--no-internet {
+      margin-top: 50px;
+      text-align: center;
+      font-size: 1rem;
+      color: #666;
+      h1 {
+        font-weight: bold;
+        font-size: 3rem;
+      }
+      p {
+        font-weight: 500;
+      }
+    }
 
     &__header {
       color: white;
