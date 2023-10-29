@@ -14,14 +14,19 @@ import {secp256k1} from '@noble/curves/secp256k1'
 
 import Control from "@/components/Control.vue";
 import BatteryControl from "@/components/BatteryControl.vue";
+import DebugBar from "@/components/DebugBar.vue";
 
 export default {
   components: {
+    DebugBar,
     BatteryControl,
     Control
   },
   data() {
     return {
+      isDebugBarVisible: false,
+      // relayMessages as keyed array
+      relayMessages: {},
       hasInternetConnection: false,
       splashMessage: "",
       privateKey: "89135da8d99a49726a2102b6663c829de39b2ea2995d73b731c07c7485ec35ca",
@@ -36,6 +41,10 @@ export default {
     }
   },
   methods: {
+    addDebugMessage(message) {
+      // push to array with timestamp as array key
+      this.relayMessages[Date.now()] = message
+    },
     reload() {
       window.location.reload()
     },
@@ -92,6 +101,7 @@ export default {
       console.log(signedEvent)
       await this.relay.publish(signedEvent)
       console.log('published')
+      this.addDebugMessage("Published event: " + JSON.stringify(event))
 
       let displayValue = value
       if (name.toLowerCase() === 'temperature') {
@@ -110,17 +120,20 @@ export default {
       this.relay = relayInit('wss://nos.lol')
       this.relay.on('connect', () => {
         console.log(`connected to ${this.relay.url}`)
+        this.addDebugMessage(`connected to ${this.relay.url}`)
         this.buttonEnabled = true
         this.getIntentEvents()
       })
       this.relay.on('error', () => {
         console.log(`failed to connect to ${this.relay.url}`)
+        this.addDebugMessage(`failed to connect to ${this.relay.url}`)
       })
 
       await this.relay.connect()
     },
     async getIntentEvents() {
       // now request the last X events
+      this.addDebugMessage('subscribing to events')
       let sub = await this.relay.sub([
         {
           kinds: [8000],
@@ -136,11 +149,13 @@ export default {
           if (event.created_at > this.mostRecentLightTimestamp) {
             this.lightValue = contentObj.value
             this.mostRecentLightTimestamp = event.created_at
+            this.addDebugMessage("Received event content: " + content)
           }
         } else if (contentObj.name.toLowerCase() === 'temperature') {
           if (event.created_at > this.mostRecentTemperatureTimestamp) {
             this.temperatureValue = contentObj.value
             this.mostRecentTemperatureTimestamp = event.created_at
+            this.addDebugMessage("Received event content: " + content)
           }
         }
       })
@@ -214,7 +229,7 @@ export default {
       </div>
       <div class="dashboard__cards">
         <control :controlValue="temperatureValue" controlType="increment"
-                  :is-interactive="isRelayConnected()"
+                 :is-interactive="isRelayConnected()"
                  control-title="Temperature"
                  unit="°C"
                  @updatecontrol="handleSettingChange('temperature', $event)"
@@ -234,6 +249,14 @@ export default {
       <p>No Internet connection found.</p>
       <p>Please connect to the Internet and try again.</p>
     </div>
+    <!--        show debug button -->
+    <p :class="`dashboard__debug-bar__toggle-button ${isDebugBarVisible ? 'dashboard__debug-bar__toggle-button--visible' : ''}`" @click="isDebugBarVisible = !isDebugBarVisible">
+      Debug
+      <span v-if="isDebugBarVisible">V</span>
+      <span v-else>^</span>
+    </p>
+    <debug-bar :debug-messages="relayMessages"
+               :class="`dashboard__debug-bar ${isDebugBarVisible ? 'dashboard__debug-bar--visible' : ''}`"/>
   </div>
 </template>
 
@@ -242,8 +265,41 @@ export default {
   background-color: rgba(255, 255, 255, 0.6);
   height: 100vh;
 
+  &__debug-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    overflow-x: hidden;
+    word-wrap: break-word;
+    display: none;
+
+    // is visible
+    &--visible {
+      height: 50%;
+      display: block;
+    }
+
+    &__toggle-button {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: black;
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.8rem;
+
+      &--visible {
+        bottom: 50%;
+      }
+    }
+  }
+
   &__reload-bar {
     margin-top: 10px;
+
     button {
       background-color: white;
       border: 1px solid white;
