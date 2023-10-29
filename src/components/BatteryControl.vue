@@ -15,6 +15,13 @@ export default {
       isWaiting: false,
     }
   },
+  props: {
+    isInteractive: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+  },
   methods: {
     refreshBatteryLevel() {
       // show loading...
@@ -52,7 +59,7 @@ export default {
 </script>
 
 <template>
-  <div class="control-card">
+  <div :class="`control-card ${isInteractive ? '' : 'control-card--disabled'}`">
     <div class="control-card__icon control-card__icon--battery">
       <p>
         <battery/>

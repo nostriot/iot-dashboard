@@ -8,6 +8,11 @@ export default {
   name: "Control",
   components: {OnOff, SwitchIcon, Switch, Thermostat},
   props: {
+    isInteractive: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
     controlTitle: {
       type: String,
       required: true,
@@ -52,7 +57,7 @@ export default {
 </script>
 
 <template>
-  <div class="control-card">
+  <div :class="`control-card ${isInteractive ? '' : 'control-card--disabled'}`">
     <div class="control-card__icon">
       <p>
         <thermostat v-if="controlType == 'increment'"/>
@@ -106,6 +111,21 @@ export default {
   height: 130px;
   position: relative;
   color: #666666;
+
+  &--disabled {
+    position: relative;
+    // overlay to block interactions
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255,255,255,0.5);
+      z-index: 10;
+    }
+  }
 
 
   &__value {

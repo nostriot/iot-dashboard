@@ -214,15 +214,19 @@ export default {
       </div>
       <div class="dashboard__cards">
         <control :controlValue="temperatureValue" controlType="increment"
+                  :is-interactive="isRelayConnected()"
                  control-title="Temperature"
                  unit="°C"
                  @updatecontrol="handleSettingChange('temperature', $event)"
         />
         <control :controlValue="lightValue" controlType="switch"
+                 :is-interactive="isRelayConnected()"
                  control-title="Light"
                  @updatecontrol="handleSettingChange('light', $event)"
         />
-        <battery-control/>
+        <battery-control
+            :is-interactive="isRelayConnected()"
+        />
       </div>
     </div>
     <div class="dashboard__content dashboard__content--no-internet" v-else>
@@ -255,7 +259,6 @@ export default {
     align-items: center;
     padding: 1rem;
     border-bottom: 1px solid #fff;
-    margin-bottom: 10px;
     position: relative;
 
     h1 {
@@ -275,7 +278,7 @@ export default {
 
   &__content {
     position: relative;
-    padding: 0 1rem;
+    padding: 1rem;
 
     &--no-internet {
       margin-top: 50px;
@@ -335,6 +338,7 @@ export default {
 
   &__cards {
     width: 100%;
+    position: relative;
   }
 }
 </style>
