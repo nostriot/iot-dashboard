@@ -277,7 +277,7 @@ export default {
 
     // is visible
     &--visible {
-      height: 50%;
+      height: 25%;
       display: block;
     }
 
@@ -292,7 +292,7 @@ export default {
       font-size: 0.8rem;
 
       &--visible {
-        bottom: 50%;
+        bottom: 25%;
       }
     }
   }
