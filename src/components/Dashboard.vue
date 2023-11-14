@@ -15,9 +15,11 @@ import {secp256k1} from '@noble/curves/secp256k1'
 import Control from "@/components/Control.vue";
 import BatteryControl from "@/components/BatteryControl.vue";
 import DebugBar from "@/components/DebugBar.vue";
+import SettingsIcon from "@/components/icons/SettingsIcon.vue";
 
 export default {
   components: {
+    SettingsIcon,
     DebugBar,
     BatteryControl,
     Control
@@ -207,7 +209,9 @@ export default {
   <div class="dashboard">
     <div class="dashboard__header">
       <h1>My Devices</h1>
-      <p class="dashboard__header__add-button">+</p>
+      <router-link :to="'settings'" class="dashboard__header__settings-button">
+        <SettingsIcon/>
+      </router-link>
     </div>
     <div class="dashboard__content" v-if="hasInternetConnection">
       <div class="dashboard__content__header">
@@ -323,12 +327,22 @@ export default {
       font-weight: bold;
     }
 
-    &__add-button {
-      font-size: 2.2rem;
+    &__settings-button {
+      width: 24px;
+      height: 24px;
       color: white;
       cursor: pointer;
       position: absolute;
       right: 1rem;
+
+      svg {
+        width: 24px;
+        height: 24px;
+
+        path {
+          fill: white;
+        }
+      }
     }
   }
 

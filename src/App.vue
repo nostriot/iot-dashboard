@@ -18,9 +18,8 @@ export default {
 
 <template>
   <main>
-    <log-in v-if="!hasLoggedIn" @login="hasLoggedIn = true"></log-in>
-    <dashboard v-else></dashboard>
-    </main>
+    <router-view/>
+  </main>
 </template>
 
 <style lang="scss">

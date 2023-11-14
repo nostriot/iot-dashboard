@@ -14,6 +14,8 @@ export default {
       this.showLoading = true
       setTimeout(() => {
         this.$emit('login')
+        // go to /dashboard
+        this.$router.push('/dashboard')
       }, 600)
     }
   },
