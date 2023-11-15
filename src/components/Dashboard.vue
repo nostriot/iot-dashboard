@@ -273,8 +273,8 @@ export default {
       <p>Please connect to the Internet and try again.</p>
       </div>
       <div v-else>
-        <h1>Hello!</h1>
-        <p>Please open the setting page and enter your IoT settings.</p>
+        <h1>Welcome :)</h1>
+        <p>Please open the settings page and enter your Nostr IoT settings.</p>
       </div>
     </div>
     <!--        show debug button -->
