@@ -8,9 +8,11 @@ import {
   getSignature,
   getEventHash,
   getPublicKey,
-  nip04
+  nip04,
+  nip19,
 } from 'nostr-tools'
 import {secp256k1} from '@noble/curves/secp256k1'
+import { bech32 } from '@scure/base'
 
 import Control from "@/components/Control.vue";
 import BatteryControl from "@/components/BatteryControl.vue";
@@ -31,15 +33,15 @@ export default {
       relayMessages: {},
       hasInternetConnection: false,
       splashMessage: "",
-      privateKey: "89135da8d99a49726a2102b6663c829de39b2ea2995d73b731c07c7485ec35ca",
-      publicKey: "d58d5dc2abdef2195532b0940d56bc44c693b48084bf11d0bb70035510c9e6b5",
-      receiverPublicKey: "22defd21ef1187806b54033e9d657d4430d98efaebd1289bb24b82224b80c7b4",
+      privateKey: null,
+      publicKey: null,
+      receiverPublicKey: null,
+      relay: null,
       buttonEnabled: false,
       temperatureValue: 0,
       lightValue: 0,
       mostRecentTemperatureTimestamp: 0,
       mostRecentLightTimestamp: 0,
-      relay: null // or you can initialize with relayInit('wss://nos.lol') if you want it immediately
     }
   },
   methods: {
@@ -119,7 +121,19 @@ export default {
 
     },
     async init() {
-      this.relay = relayInit('wss://nos.lol')
+      // settings from localSettings
+      // privateKey, publicKey, receiverPublicKey and relay
+      let nsec = localStorage.getItem('nsec')
+      this.privateKey = nip19.decode(nsec).data;
+      this.publicKey = getPublicKey(this.privateKey)
+      let npub = localStorage.getItem('npub')
+      this.receiverPublicKey = nip19.decode(npub).data;
+      this.relay = localStorage.getItem('relay')
+      this.relay = "wss://nos.lol"
+
+      // get relay from localstorage or default to nos.lol
+      const relayUri = this.relay || 'wss://nos.lol'
+      this.relay = relayInit(relayUri)
       this.relay.on('connect', () => {
         console.log(`connected to ${this.relay.url}`)
         this.addDebugMessage(`connected to ${this.relay.url}`)
