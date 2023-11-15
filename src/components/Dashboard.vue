@@ -62,6 +62,9 @@ export default {
       // connect to relay
       this.init()
     },
+    hasSettings() {
+      return this.privateKey && this.publicKey && this.receiverPublicKey && this.relay
+    },
     /**
      * method for setting a splash message and clearing after 3 seconds
      */
@@ -227,7 +230,8 @@ export default {
         <SettingsIcon/>
       </router-link>
     </div>
-    <div class="dashboard__content" v-if="hasInternetConnection">
+
+    <div class="dashboard__content" v-if="hasInternetConnection && hasSettings()">
       <div class="dashboard__content__header">
         <div
             :class="`dashboard__content__header__circle ${isRelayConnected() ? 'dashboard__content__header__circle--active' : 'dashboard__content__header__circle--inactive'}`">
@@ -263,9 +267,15 @@ export default {
       </div>
     </div>
     <div class="dashboard__content dashboard__content--no-internet" v-else>
+      <div v-if="hasSettings()">
       <h1>:(</h1>
       <p>No Internet connection found.</p>
       <p>Please connect to the Internet and try again.</p>
+      </div>
+      <div v-else>
+        <h1>Hello!</h1>
+        <p>Please open the setting page and enter your IoT settings.</p>
+      </div>
     </div>
     <!--        show debug button -->
     <p :class="`dashboard__debug-bar__toggle-button ${isDebugBarVisible ? 'dashboard__debug-bar__toggle-button--visible' : ''}`" @click="isDebugBarVisible = !isDebugBarVisible">

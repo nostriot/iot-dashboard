@@ -45,18 +45,18 @@ export default {
       <p>Settings saved!</p>
     </div>
     <div class="settings__content">
-      <form action="" @submit="saveSettings()">
+      <form action="" @submit.prevent="saveSettings()">
         <fieldset>
           <label for="nsec">Your nsec</label>
-          <input type="text" name="nsec" id="nsec" v-model="nsec"/>
+          <input type="text" name="nsec" id="nsec" v-model="nsec" placeholder="nsec..."/>
         </fieldset>
         <fieldset>
           <label for="npub">Your device's npub</label>
-          <input type="text" name="npub" id="npub" v-model="npub"/>
+          <input type="text" name="npub" id="npub" v-model="npub" placeholder="npub..."/>
         </fieldset>
         <fieldset>
           <label for="relay">Your prefered relay</label>
-          <input type="text" name="relay" id="relay" placeholder="wss://" v-model="relay"/>
+          <input type="text" name="relay" id="relay" placeholder="wss://nos.lol" v-model="relay"/>
         </fieldset>
 
         <button>Save</button>
