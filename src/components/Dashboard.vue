@@ -132,7 +132,6 @@ export default {
       let npub = localStorage.getItem('npub')
       this.receiverPublicKey = nip19.decode(npub).data;
       this.relay = localStorage.getItem('relay')
-      this.relay = "wss://nos.lol"
 
       // get relay from localstorage or default to nos.lol
       const relayUri = this.relay || 'wss://nos.lol'
@@ -188,6 +187,7 @@ export default {
       //  1 is open
       //  2 is closing
       //  3 is closed
+      console.log("Relay status", this.relay.status)
       if (this.relay.status === 1) {
         return true
       } else {
@@ -224,6 +224,7 @@ export default {
 
 <template>
   <div class="dashboard">
+    
     <div class="dashboard__header">
       <h1>My Devices</h1>
       <router-link :to="'settings'" class="dashboard__header__settings-button">
