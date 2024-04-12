@@ -8,9 +8,9 @@ export default {
     return {
       isSettingsSaved: false,
       // field values to populate from local storage
-      nsec: '',
-      npub: '',
-      relay: '',
+      nsec: null,
+      npub: null,
+      relay: null,
     }
   },
   methods: {
@@ -21,11 +21,22 @@ export default {
       localStorage.setItem('relay', this.relay)
       // go to /dashboard
       this.isSettingsSaved = true
-
     }
   },
   // on mount load settings from local storage
   mounted() {
+    // if local storage is empty, use default values
+    if (!localStorage.getItem('nsec')) {
+      localStorage.setItem('nsec', 'nsec13yf4m2xenfyhy63pq2mxv0yznh3ekt4zn9wh8de3cp78fp0vxh9qz9rmal')
+    }
+    if (!localStorage.getItem('npub')) {
+      localStorage.setItem('npub', 'npub1yt006g00zxrcq665qvlf6etagscdnrh6a0gj3xajfwpzyjuqc76q0hk29r')
+    }
+    if (!localStorage.getItem('relay')) {
+      localStorage.setItem('relay', 'wss://relay.nostr.cymru')
+    }
+
+
     this.nsec = localStorage.getItem('nsec')
     this.npub = localStorage.getItem('npub')
     this.relay = localStorage.getItem('relay')
@@ -48,15 +59,15 @@ export default {
       <form action="" @submit.prevent="saveSettings()">
         <fieldset>
           <label for="nsec">Your nsec</label>
-          <input type="text" name="nsec" id="nsec" v-model="nsec" placeholder="nsec..."/>
+          <input type="text" name="nsec" id="nsec" v-model="nsec" placeholder="nsec..." />
         </fieldset>
         <fieldset>
           <label for="npub">Your device's npub</label>
-          <input type="text" name="npub" id="npub" v-model="npub" placeholder="npub..."/>
+          <input type="text" name="npub" id="npub" v-model="npub" placeholder="npub..." />
         </fieldset>
         <fieldset>
           <label for="relay">Your prefered relay</label>
-          <input type="text" name="relay" id="relay" placeholder="wss://nos.lol" v-model="relay"/>
+          <input type="text" name="relay" id="relay" placeholder="wss://nos.lol" v-model="relay" />
         </fieldset>
 
         <button>Save</button>
