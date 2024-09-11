@@ -39,12 +39,15 @@ export default {
   },
   data() {
     return {
+      timeAgoText: "",
       newControlValue: 0,
       settingsVisible: false,
     }
   },
   mounted() {
     this.newControlValue = this.controlValue
+    this.updateTimeAgo(); // Initial call to set value
+    this.intervalId = setInterval(this.updateTimeAgo, 1000);
   },
   methods: {
     sendSetting() {
@@ -55,7 +58,41 @@ export default {
     formatTimestamp(timestamp) {
       const date = new Date(timestamp * 1000)
       return date.toLocaleString()
+    },
+    timeAgo(timestamp) {
+      const date = new Date(timestamp * 1000)
+      const now = new Date()
+      const diff = now - date
+      const seconds = Math.floor(diff / 1000)
+      const minutes = Math.floor(seconds / 60)
+      const hours = Math.floor(minutes / 60)
+      const days = Math.floor(hours / 24)
+      const months = Math.floor(days / 30)
+      const years = Math.floor(months / 12)
+
+      if (years > 0) {
+        return `${years} year${years > 1 ? 's' : ''} ago`
+      } else if (months > 0) {
+        return `${months} month${months > 1 ? 's' : ''} ago`
+      } else if (days > 0) {
+        return `${days} day${days > 1 ? 's' : ''} ago`
+      } else if (hours > 0) {
+        return `${hours} hour${hours > 1 ? 's' : ''} ago`
+      } else if (minutes > 0) {
+        return `${minutes} minute${minutes > 1 ? 's' : ''} ago`
+      } else {
+        return `${seconds} second${seconds > 1 ? 's' : ''} ago`
+      }
+    },
+    updateTimeAgo() {
+      if(this.controlUpdatedTimestamp) {
+        this.timeAgoText = this.timeAgo(this.controlUpdatedTimestamp);
+      }
     }
+  },
+  beforeDestroy() {
+    // Clear the interval when component is destroyed
+    clearInterval(this.intervalId);
   },
   // emit
   emits: ['updatecontrol'],
@@ -78,8 +115,8 @@ export default {
       <p>
         {{ controlTitle }}
       </p>
-      <p v-if="controlUpdatedTimestamp">
-        <small>Updated {{formatTimestamp(controlUpdatedTimestamp)}}</small>
+      <p v-if="timeAgoText">
+        <small>Updated {{timeAgoText}}</small>
       </p>
 
     </div>
