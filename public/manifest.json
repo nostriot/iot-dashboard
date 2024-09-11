@@ -1,7 +1,7 @@
 {
-  "name": "NostrIoT",
-  "short_name": "NostrIoT",
-  "description": "The NostrIoT app",
+  "name": "CT Sensors",
+  "short_name": "CT Sensors",
+  "description": "",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
