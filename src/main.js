@@ -5,10 +5,9 @@ import {createRouter, createWebHashHistory  } from "vue-router";
 import App from './App.vue'
 import Dashboard from "@/components/Dashboard.vue";
 import Settings from "@/components/Settings.vue";
-import LogIn from "@/components/LogIn.vue";
 
 const routes = [
-    { path: '/', component: LogIn },
+    { path: '/dashboard', component: Dashboard },
     { path: '/dashboard', component: Dashboard},
     { path: '/settings', component:  Settings },
 ]

@@ -40,8 +40,10 @@ export default {
       relayStatus: 0,
       buttonEnabled: false,
       temperatureValue: 0,
+      pressureValue: 0,
       lightValue: 0,
       mostRecentTemperatureTimestamp: 0,
+      mostRecentPressureTimestamp: 0,
       mostRecentLightTimestamp: 0,
     }
   },
@@ -156,26 +158,31 @@ export default {
       this.addDebugMessage('subscribing to events')
       let sub = await this.relay.sub([
         {
-          kinds: [8000],
-          // authors: [this.receiverPublicKey],
+          kinds: [30107],
+          authors: [
+              'd0bfc94bd4324f7df2a7601c4177209828047c4d3904d64009a3c67fb5d5e7ca', // pressure
+              '0987d97ee78e6a2281d2f45aedebc3d22da346a064850ca85440c2dd104badd4'
+          ],
           limit: 10
         },
       ])
       sub.on('event', async (event) => {
-        let content = await nip04.decrypt(this.privateKey, this.receiverPublicKey, event.content)
-        console.log('decrypted content', content)
-        let contentObj = JSON.parse(content)
-        if (contentObj.name.toLowerCase() === 'light') {
-          if (event.created_at > this.mostRecentLightTimestamp) {
-            this.lightValue = contentObj.value
-            this.mostRecentLightTimestamp = event.created_at
-            this.addDebugMessage("Received event content: " + content)
-          }
-        } else if (contentObj.name.toLowerCase() === 'temperature') {
+        console.log('Got event', event)
+
+        let typeTag = event.tags.find(tag => tag[0] === 'type')
+        console.log('typeTag', typeTag)
+
+        if (typeTag[1] === 'temperature') {
           if (event.created_at > this.mostRecentTemperatureTimestamp) {
-            this.temperatureValue = contentObj.value
+            this.temperatureValue = event.content
             this.mostRecentTemperatureTimestamp = event.created_at
-            this.addDebugMessage("Received event content: " + content)
+            this.addDebugMessage("Temperature: " + event.content)
+          }
+        } else if (typeTag[1] === 'pressure') {
+          if(event.created_at > this.mostRecentPressureTimestamp) {
+            this.pressureValue = event.content
+            this.mostRecentPressureTimestamp = event.created_at
+            this.addDebugMessage("Pressure event: " + event.content)
           }
         }
       })
@@ -189,10 +196,8 @@ export default {
       //  1 is open
       //  2 is closing
       //  3 is closed
-      console.log("Relay status", this.relayStatus)
       if (Number(this.relay.status) === 1) {
         this.relayStatus = 1
-        console.log('Relay is connected')
         return true
       } else {
         return false
@@ -201,7 +206,7 @@ export default {
     pingRelayStatus() {
       // every 5 seconds, refresh the relay status
       let status = this.isRelayConnected()
-      console.log('Is relay connected?', status)
+      // console.log('Is relay connected?', status)
 
       setTimeout(() => {
         this.pingRelayStatus()
@@ -240,15 +245,14 @@ export default {
         <div
             :class="`dashboard__content__header__circle ${isRelayConnected() ? 'dashboard__content__header__circle--active' : 'dashboard__content__header__circle--inactive'}`">
         </div>
-        <h2>Living Room</h2>
+        <p v-if="isRelayConnected()">Connected to relay</p>
+        <p v-else>Not connected to relay</p>
+        <p v-if="!isRelayConnected()">
+          <button @click="reload()">
+            Reload
+          </button>
+        </p>
       </div>
-
-      <p v-if="!isRelayConnected()" class="dashboard__reload-bar">
-        Not connected to relay.
-        <button @click="reload()">
-          Reload
-        </button>
-      </p>
 
       <div v-if="splashMessage" class="dashboard__splash">
         <p>{{ splashMessage }}</p>
@@ -260,13 +264,11 @@ export default {
                  unit="°C"
                  @updatecontrol="handleSettingChange('temperature', $event)"
         />
-        <control :controlValue="lightValue" controlType="switch"
+        <control :controlValue="pressureValue" controlType="increment"
                  :is-interactive="isRelayConnected()"
-                 control-title="Light"
-                 @updatecontrol="handleSettingChange('light', $event)"
-        />
-        <battery-control
-            :is-interactive="isRelayConnected()"
+                 control-title="Pressure"
+                 unit="hPa"
+                 @updatecontrol="handleSettingChange('temperature', $event)"
         />
       </div>
     </div>
@@ -351,14 +353,12 @@ export default {
 
     h1 {
       font-size: 1.2rem;
-      color: white;
       font-weight: bold;
     }
 
     &__settings-button {
       width: 24px;
       height: 24px;
-      color: white;
       cursor: pointer;
       position: absolute;
       right: 1rem;
@@ -368,7 +368,6 @@ export default {
         height: 24px;
 
         path {
-          fill: white;
         }
       }
     }
@@ -395,7 +394,6 @@ export default {
     }
 
     &__header {
-      color: white;
       font-size: 0.8rem;
       font-weight: bold;
       display: flex;

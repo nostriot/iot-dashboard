@@ -3,10 +3,11 @@ import Thermostat from "@/components/icons/Thermostat.vue";
 import Switch from "@/components/icons/SwitchIcon.vue";
 import SwitchIcon from "@/components/icons/SwitchIcon.vue";
 import OnOff from "@/components/icons/OnOff.vue";
+import PressureGauge from "@/components/icons/PressureGauge.vue";
 
 export default {
   name: "Control",
-  components: {OnOff, SwitchIcon, Switch, Thermostat},
+  components: {PressureGauge, OnOff, SwitchIcon, Switch, Thermostat},
   props: {
     isInteractive: {
       type: Boolean,
@@ -60,7 +61,8 @@ export default {
   <div :class="`control-card ${isInteractive ? '' : 'control-card--disabled'}`">
     <div class="control-card__icon">
       <p>
-        <thermostat v-if="controlType == 'increment'"/>
+        <thermostat v-if="controlTitle.toLowerCase() === 'temperature'"/>
+        <pressure-gauge v-else-if="controlTitle.toLowerCase() === 'pressure'"/>
         <switch-icon v-else-if="controlType == 'switch'"/>
       </p>
       <p>
@@ -68,7 +70,7 @@ export default {
       </p>
 
     </div>
-    <div class="control-card__value" @click="settingsVisible = true">
+    <div class="control-card__value">
       <p v-if="controlType == 'switch'">
         <on-off
             :is-on="newControlValue == 1 ? true : false"
@@ -101,7 +103,7 @@ export default {
 
 <style lang="scss">
 .control-card {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.8);
   padding: 20px;
   border-radius: 10px;
   text-align: center;
@@ -165,15 +167,15 @@ export default {
       height: 48px;
 
       path {
-        fill: #6c4285;
+        fill: black;
       }
 
       path, circle {
-        stroke: #6c4285;
+        stroke: black;
       }
 
       rect {
-        stroke: #6c4285;
+        stroke: black;
       }
     }
   }

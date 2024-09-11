@@ -30,10 +30,10 @@ export default {
       localStorage.setItem('nsec', 'nsec13yf4m2xenfyhy63pq2mxv0yznh3ekt4zn9wh8de3cp78fp0vxh9qz9rmal')
     }
     if (!localStorage.getItem('npub')) {
-      localStorage.setItem('npub', 'npub1yt006g00zxrcq665qvlf6etagscdnrh6a0gj3xajfwpzyjuqc76q0hk29r')
+      localStorage.setItem('npub', 'npub16zlujj75xf8hmu48vqwyzaeqnq5qglzd8yzdvsqf50r8ldw4ul9qvgf7m6')
     }
     if (!localStorage.getItem('relay')) {
-      localStorage.setItem('relay', 'wss://nos.lol')
+      localStorage.setItem('relay', 'wss://relay.nostriot.com')
     }
 
 
@@ -57,14 +57,14 @@ export default {
     </div>
     <div class="settings__content">
       <form action="" @submit.prevent="saveSettings()">
-        <fieldset>
-          <label for="nsec">Your nsec</label>
-          <input type="text" name="nsec" id="nsec" v-model="nsec" placeholder="nsec..." />
-        </fieldset>
-        <fieldset>
-          <label for="npub">Your device's npub</label>
-          <input type="text" name="npub" id="npub" v-model="npub" placeholder="npub..." />
-        </fieldset>
+<!--        <fieldset>-->
+<!--          <label for="nsec">Your nsec</label>-->
+<!--          <input type="text" name="nsec" id="nsec" v-model="nsec" placeholder="nsec..." />-->
+<!--        </fieldset>-->
+<!--        <fieldset>-->
+<!--          <label for="npub">Your device's npub</label>-->
+<!--          <input type="text" name="npub" id="npub" v-model="npub" placeholder="npub..." />-->
+<!--        </fieldset>-->
         <fieldset>
           <label for="relay">Your prefered relay</label>
           <input type="text" name="relay" id="relay" placeholder="wss://nos.lol" v-model="relay" />
@@ -116,7 +116,7 @@ export default {
       height: 50px;
       border-radius: 5px;
       border: 0;
-      background-color: #9806C6;
+      background-color: black;
       color: white;
       font-size: 1rem;
     }
@@ -134,7 +134,6 @@ export default {
     h1 {
       text-align: center;
       font-size: 1.2rem;
-      color: white;
       font-weight: bold;
     }
 
@@ -148,7 +147,6 @@ export default {
         height: 24px;
 
         path {
-          fill: white;
         }
       }
     }
