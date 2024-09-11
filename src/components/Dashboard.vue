@@ -231,7 +231,7 @@ export default {
 <template>
   <div class="dashboard">
     <div class="dashboard__header">
-      <h1>My Devices</h1>
+      <h1>My Data</h1>
       <router-link :to="'settings'" class="dashboard__header__settings-button">
         <SettingsIcon/>
       </router-link>
