@@ -33,7 +33,7 @@ export default {
       localStorage.setItem('npub', 'npub1yt006g00zxrcq665qvlf6etagscdnrh6a0gj3xajfwpzyjuqc76q0hk29r')
     }
     if (!localStorage.getItem('relay')) {
-      localStorage.setItem('relay', 'wss://relay.nostr.cymru')
+      localStorage.setItem('relay', 'wss://nos.lol')
     }
 
 

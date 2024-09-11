@@ -37,6 +37,7 @@ export default {
       publicKey: null,
       receiverPublicKey: null,
       relay: null,
+      relayStatus: 0,
       buttonEnabled: false,
       temperatureValue: 0,
       lightValue: 0,
@@ -135,6 +136,7 @@ export default {
 
       // get relay from localstorage or default to nos.lol
       const relayUri = this.relay || 'wss://nos.lol'
+      console.log('connecting to relay', relayUri)
       this.relay = relayInit(relayUri)
       this.relay.on('connect', () => {
         console.log(`connected to ${this.relay.url}`)
@@ -187,8 +189,10 @@ export default {
       //  1 is open
       //  2 is closing
       //  3 is closed
-      console.log("Relay status", this.relay.status)
-      if (this.relay.status === 1) {
+      console.log("Relay status", this.relayStatus)
+      if (Number(this.relay.status) === 1) {
+        this.relayStatus = 1
+        console.log('Relay is connected')
         return true
       } else {
         return false
@@ -224,7 +228,6 @@ export default {
 
 <template>
   <div class="dashboard">
-    
     <div class="dashboard__header">
       <h1>My Devices</h1>
       <router-link :to="'settings'" class="dashboard__header__settings-button">
