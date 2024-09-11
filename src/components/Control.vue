@@ -79,7 +79,7 @@ export default {
         {{ controlTitle }}
       </p>
       <p v-if="controlUpdatedTimestamp">
-        <small>Updated at {{formatTimestamp(controlUpdatedTimestamp)}}</small>
+        <small>Updated {{formatTimestamp(controlUpdatedTimestamp)}}</small>
       </p>
 
     </div>
