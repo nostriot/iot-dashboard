@@ -48,7 +48,7 @@ export default {
   <div class="settings">
     <div class="settings__header">
       <h1>Settings</h1>
-      <router-link to="/dashboard" class="back">
+      <router-link to="/" class="back">
         <close-icon/>
       </router-link>
     </div>

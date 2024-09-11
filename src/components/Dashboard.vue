@@ -36,7 +36,7 @@ export default {
       privateKey: null,
       publicKey: null,
       receiverPublicKey: null,
-      relay: null,
+      relay: "wss://relay.nostriot.com",
       relayStatus: 0,
       buttonEnabled: false,
       temperatureValue: 0,
@@ -68,7 +68,7 @@ export default {
       this.init()
     },
     hasSettings() {
-      return this.privateKey && this.publicKey && this.receiverPublicKey && this.relay
+      return this.relay
     },
     /**
      * method for setting a splash message and clearing after 3 seconds
@@ -129,17 +129,10 @@ export default {
 
     },
     async init() {
-      // settings from localSettings
-      // privateKey, publicKey, receiverPublicKey and relay
-      let nsec = localStorage.getItem('nsec')
-      this.privateKey = nip19.decode(nsec).data;
-      this.publicKey = getPublicKey(this.privateKey)
-      let npub = localStorage.getItem('npub')
-      this.receiverPublicKey = nip19.decode(npub).data;
       this.relay = localStorage.getItem('relay')
 
       // get relay from localstorage or default to nos.lol
-      const relayUri = this.relay || 'wss://nos.lol'
+      const relayUri = this.relay || 'wss://relay.nostriot.com'
       console.log('connecting to relay', relayUri)
       this.relay = relayInit(relayUri)
       this.relay.on('connect', () => {
@@ -285,8 +278,8 @@ export default {
       <p>Please connect to the Internet and try again.</p>
       </div>
       <div v-else>
-        <h1>Welcome :)</h1>
-        <p>Please open the settings page and enter your Nostr IoT settings.</p>
+        <h1>Welcome</h1>
+        <p>Please open the settings page using the <strong>gear</strong> icon in the top right corner of the screen and enter your prefered settings.</p>
       </div>
     </div>
     <!--        show debug button -->

@@ -7,8 +7,7 @@ import Dashboard from "@/components/Dashboard.vue";
 import Settings from "@/components/Settings.vue";
 
 const routes = [
-    { path: '/dashboard', component: Dashboard },
-    { path: '/dashboard', component: Dashboard},
+    { path: '/', component: Dashboard },
     { path: '/settings', component:  Settings },
 ]
 
@@ -16,7 +15,7 @@ const routes = [
 const router = createRouter({
     // 4. Provide the history implementation to use. We are using the hash history for simplicity here.
     history: createWebHashHistory(),
-    routes, // short for `routes: routes`
+    routes: routes, // short for `routes: routes`
 })
 
 const app = createApp(App)
