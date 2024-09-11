@@ -22,6 +22,11 @@ export default {
       type: Number,
       required: true,
     },
+    controlUpdatedTimestamp: {
+      type: Number,
+      required: false,
+      default: '',
+    },
     controlType: {
       type: String,
       required: true,
@@ -45,6 +50,11 @@ export default {
     sendSetting() {
       this.settingsVisible = false
       this.$emit('updatecontrol', this.newControlValue)
+    },
+    // method to convert a unix timestamp to a human readable format
+    formatTimestamp(timestamp) {
+      const date = new Date(timestamp * 1000)
+      return date.toLocaleString()
     }
   },
   // emit
@@ -67,6 +77,9 @@ export default {
       </p>
       <p>
         {{ controlTitle }}
+      </p>
+      <p v-if="controlUpdatedTimestamp">
+        <small>Updated at {{formatTimestamp(controlUpdatedTimestamp)}}</small>
       </p>
 
     </div>

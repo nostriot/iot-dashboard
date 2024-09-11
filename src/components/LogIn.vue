@@ -25,8 +25,6 @@ export default {
 
 <template>
 <div class="login">
-<!--  full screen login page with a field for a user ID and a login button-->
-  <img src="../assets/logo.png" alt="NostrIoT logo" />
   <button @click="login" >
     <span v-if="!showLoading">Log in</span>
     <loading v-else></loading>

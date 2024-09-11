@@ -40,7 +40,9 @@ export default {
       relayStatus: 0,
       buttonEnabled: false,
       temperatureValue: 0,
+      temperatureTimestamp: 0,
       pressureValue: 0,
+      pressureTimestamp: 0,
       lightValue: 0,
       mostRecentTemperatureTimestamp: 0,
       mostRecentPressureTimestamp: 0,
@@ -175,12 +177,14 @@ export default {
         if (typeTag[1] === 'temperature') {
           if (event.created_at > this.mostRecentTemperatureTimestamp) {
             this.temperatureValue = event.content
+            this.temperatureTimestamp = event.created_at
             this.mostRecentTemperatureTimestamp = event.created_at
             this.addDebugMessage("Temperature: " + event.content)
           }
         } else if (typeTag[1] === 'pressure') {
           if(event.created_at > this.mostRecentPressureTimestamp) {
             this.pressureValue = event.content
+            this.pressureTimestamp = event.created_at
             this.mostRecentPressureTimestamp = event.created_at
             this.addDebugMessage("Pressure event: " + event.content)
           }
@@ -259,12 +263,14 @@ export default {
       </div>
       <div class="dashboard__cards">
         <control :controlValue="temperatureValue" controlType="increment"
+                 :control-updated-timestamp="temperatureTimestamp"
                  :is-interactive="isRelayConnected()"
                  control-title="Temperature"
                  unit="°C"
                  @updatecontrol="handleSettingChange('temperature', $event)"
         />
         <control :controlValue="pressureValue" controlType="increment"
+                 :control-updated-timestamp="pressureTimestamp"
                  :is-interactive="isRelayConnected()"
                  control-title="Pressure"
                  unit="hPa"
