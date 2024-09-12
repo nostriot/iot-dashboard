@@ -12,7 +12,7 @@ import {
   nip19,
 } from 'nostr-tools'
 import {secp256k1} from '@noble/curves/secp256k1'
-import { bech32 } from '@scure/base'
+import {bech32} from '@scure/base'
 
 import Control from "@/components/Control.vue";
 import BatteryControl from "@/components/BatteryControl.vue";
@@ -155,8 +155,7 @@ export default {
         {
           kinds: [30107],
           authors: [
-              'd0bfc94bd4324f7df2a7601c4177209828047c4d3904d64009a3c67fb5d5e7ca', // pressure
-              '0987d97ee78e6a2281d2f45aedebc3d22da346a064850ca85440c2dd104badd4'
+            'd0bfc94bd4324f7df2a7601c4177209828047c4d3904d64009a3c67fb5d5e7ca', // pressure
           ],
           limit: 10
         },
@@ -164,18 +163,28 @@ export default {
       sub.on('event', async (event) => {
         console.log('Got event', event)
 
-        let typeTag = event.tags.find(tag => tag[0] === 'type')
-        console.log('typeTag', typeTag)
+        let typeTag = null;
 
-        if (typeTag[1] === 'temperature') {
+        for (let tag of event.tags) {
+          if (tag.includes('l')) {
+            typeTag = tag;
+            break;
+          }
+        }
+
+        if(typeTag) {
+          console.log('typeTag', typeTag);
+        }
+
+        if (typeTag && typeTag.includes('temperature')) {
           if (event.created_at > this.mostRecentTemperatureTimestamp) {
             this.temperatureValue = event.content
             this.temperatureTimestamp = event.created_at
             this.mostRecentTemperatureTimestamp = event.created_at
             this.addDebugMessage("Temperature: " + event.content)
           }
-        } else if (typeTag[1] === 'pressure') {
-          if(event.created_at > this.mostRecentPressureTimestamp) {
+        } else if (typeTag && typeTag.includes('pressure')) {
+          if (event.created_at > this.mostRecentPressureTimestamp) {
             this.pressureValue = event.content
             this.pressureTimestamp = event.created_at
             this.mostRecentPressureTimestamp = event.created_at
@@ -273,17 +282,19 @@ export default {
     </div>
     <div class="dashboard__content dashboard__content--no-internet" v-else>
       <div v-if="hasSettings()">
-      <h1>:(</h1>
-      <p>No Internet connection found.</p>
-      <p>Please connect to the Internet and try again.</p>
+        <h1>:(</h1>
+        <p>No Internet connection found.</p>
+        <p>Please connect to the Internet and try again.</p>
       </div>
       <div v-else>
         <h1>Welcome</h1>
-        <p>Please open the settings page using the <strong>gear</strong> icon in the top right corner of the screen and enter your prefered settings.</p>
+        <p>Please open the settings page using the <strong>gear</strong> icon in the top right corner of the screen and
+          enter your prefered settings.</p>
       </div>
     </div>
     <!--        show debug button -->
-    <p :class="`dashboard__debug-bar__toggle-button ${isDebugBarVisible ? 'dashboard__debug-bar__toggle-button--visible' : ''}`" @click="isDebugBarVisible = !isDebugBarVisible">
+    <p :class="`dashboard__debug-bar__toggle-button ${isDebugBarVisible ? 'dashboard__debug-bar__toggle-button--visible' : ''}`"
+       @click="isDebugBarVisible = !isDebugBarVisible">
       Debug
       <span v-if="isDebugBarVisible">V</span>
       <span v-else>^</span>
