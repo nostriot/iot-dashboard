@@ -1,6 +1,6 @@
-# nostwich-control
+# Nostr IoT Dashboard 
 
-This template should help get you started developing with Vue 3 in Vite.
+This is a very simple VueJS 3 app that displays sensor data from a single Nostr relay and for a single npub
 
 ## Recommended IDE Setup
 
