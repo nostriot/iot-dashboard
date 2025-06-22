@@ -43,9 +43,12 @@ export default {
       temperatureTimestamp: 0,
       pressureValue: 0,
       pressureTimestamp: 0,
+      humidityValue: 0,
+      humidityTimestamp: 0,
       lightValue: 0,
       mostRecentTemperatureTimestamp: 0,
       mostRecentPressureTimestamp: 0,
+      mostRecentHumidityTimestamp: 0,
       mostRecentLightTimestamp: 0,
     }
   },
@@ -155,7 +158,7 @@ export default {
         {
           kinds: [30107],
           authors: [
-            'd0bfc94bd4324f7df2a7601c4177209828047c4d3904d64009a3c67fb5d5e7ca', // pressure
+            'a3053f8431a77127ea7427cd2625f62e44d1aaa439df021f5ab0badd843249ac', // pressure
           ],
           limit: 10
         },
@@ -189,6 +192,13 @@ export default {
             this.pressureTimestamp = event.created_at
             this.mostRecentPressureTimestamp = event.created_at
             this.addDebugMessage("Pressure event: " + event.content)
+          }
+        } else if (typeTag && typeTag.includes('humidity')) {
+          if (event.created_at > this.mostRecentHumidityTimestamp) {
+            this.humidityValue = event.content
+            this.humidityTimestamp = event.created_at
+            this.mostRecentHumidityTimestamp = event.created_at
+            this.addDebugMessage("Humidity event: " + event.content)
           }
         }
       })
@@ -276,7 +286,14 @@ export default {
                  :is-interactive="isRelayConnected()"
                  control-title="Pressure"
                  unit="hPa"
-                 @updatecontrol="handleSettingChange('temperature', $event)"
+                 @updatecontrol="handleSettingChange('pressure', $event)"
+        />
+        <control :controlValue="humidityValue" controlType="increment"
+                 :control-updated-timestamp="humidityTimestamp"
+                 :is-interactive="isRelayConnected()"
+                 control-title="Humidity"
+                 unit="%"
+                 @updatecontrol="handleSettingChange('humidity', $event)"
         />
       </div>
     </div>
